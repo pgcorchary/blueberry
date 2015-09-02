@@ -3,6 +3,10 @@
 # from the polaris project
 # audit users between cassandra file manifest and actual swift container
 
+# if you have problem piping this script output breaking on UnicodeEncodeError, set this in your bash shell
+# export PYTHONIOENCODING=utf-8
+
+
 from cassandra.cluster import Cluster
 import sys,os, yaml
 import simplejson
@@ -100,7 +104,6 @@ for row in rows:
     chunk_num = 0
     if json['size'] == 0:  # the file has zero length and was never uploaded
       file_state_flag = "FAIL"
-      chunk_num = 0
       valid_chunks = 0
     else: # the file is contained totally in one file object (no 'chunks')
       obj_container =  json['container']
@@ -111,9 +114,12 @@ for row in rows:
         file_state_flag = "  OK"
   msg = ""
   if (json['size'] > 1000000 and chunk_num == 0):
-    file_state_flag = "PBLM"
-    msg = "**file should have multiple chunks based on size!!! swift-content-length=" + str(chunk_content_len) + " code=" + str(chunk_code)
-  print "%s #%3s <<%s>>, %s bytes of %s chunks, swift-valid-file-chunks=%s %s" % (file_state_flag, count, row.path, json['size'], chunk_num, valid_chunks,msg)
+    file_state_flag = "UKNW"
+    chunk_num = 1
+    msg = "*expected multi-chunks for size=" + str(chunk_content_len) + " code=" + str(chunk_code)
+  file_date = json['last-modified']
+  print "%s #%3s <<%s>>, %sb, %s chunks, valid-chunks=%s date=%s %s" % (file_state_flag, count, row.path, json['size'], chunk_num, valid_chunks, file_date, msg)
+# end for loop
 
 print "DONE %s files checked for user" % count
 
