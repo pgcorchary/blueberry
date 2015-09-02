@@ -65,6 +65,7 @@ def object_validate (container, obj):
       code = 0
     else:
       code = 1
+    #client.close()
   except swiftclient.ClientException as err:
     code = str(err.http_status)
     cl = 0
@@ -72,6 +73,7 @@ def object_validate (container, obj):
 
 #all files for the user, one in each row
 rows = session.execute("SELECT * FROM swift_directory_cf WHERE user_id=%s", (userId,))
+cluster.shutdown()  # make sure we cleanly close our cassandra connections
 n = len(rows)
 if n > 0:
   print "FILES for user %s = %s" % (userId, len(rows))
