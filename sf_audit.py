@@ -118,7 +118,7 @@ for row in rows:
     chunk_num = 1
     msg = "*expected multi-chunks for size=" + str(chunk_content_len) + " code=" + str(chunk_code)
   file_date = json['last-modified']
-  print "%s #%3s <<%s>>, %sb, %s chunks, valid-chunks=%s date=%s %s" % (file_state_flag, count, row.path, json['size'], chunk_num, valid_chunks, file_date, msg)
+  print "%s #%3s <<%s>>, %sb, %s chunks, valid-chunks=%s, date=%s %s" % (file_state_flag, count, row.path, json['size'], chunk_num, valid_chunks, file_date, msg)
 # end for loop
 
 print "DONE %s files checked for user" % count
